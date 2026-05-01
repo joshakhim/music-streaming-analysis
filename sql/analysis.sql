@@ -1,90 +1,63 @@
 -- NOW EXPLORATORY DATA ANALYSIS --
+-- ============================================
+-- MUSIC STREAMING DATA ANALYSIS
+-- ============================================
+
+-- This analysis explores key performance metrics in the dataset:
+-- 1. Identifying top artists based on total streams
+-- 2. Comparing revenue generation across streaming platforms
+-- 3. Analyzing geographic distribution of streams
+-- 4. Evaluating relationship between artist popularity and revenue
+
+-- The goal is to uncover trends in audience engagement,
+-- platform performance, and monetization efficiency.
 
 
-SELECT *
-FROM layoffs_cleaned
-WHERE company LIKE 'blackba%'
-;
-
-SELECT MAX(total_laid_off), MAX(percentage_laid_off)
-FROM layoffs_cleaned;
-
-SELECT *
-FROM layoffs_cleaned
-WHERE percentage_laid_off = 1
-ORDER BY funds_raised_millions DESC
-;
-
-SELECT company, SUM(total_laid_off)
-FROM layoffs_cleaned
-GROUP BY company
-ORDER BY 2 DESC
-;
-
-SELECT MIN(`date`), MAX(`date`)
-FROM layoffs_cleaned
-;
-
-SELECT YEAR(`date`), SUM(total_laid_off)
-FROM layoffs_cleaned
-GROUP BY YEAR(`date`)
-ORDER BY 1  DESC
-;
+-- Section 1: Artist Performance
+-- Section 2: Platform Analysis
+-- Section 3: Geographic Insights
+-- Section 4: Revenue vs Popularity
 
 
-;SELECT YEAR(`date`), SUM(total_laid_off)
-FROM layoffs_cleaned
-GROUP BY YEAR(`date`)
-ORDER BY 1  DESC
-;
 
 
-SELECT SUBSTRING(`date`,1,7) AS `MONTH`, SUM(total_laid_off) 
-FROM layoffs_cleaned
-GROUP BY `MONTH`
-ORDER BY 1  ASC;
-
-WITH Rolling_total AS 
-(
-SELECT SUBSTRING(`date`,1,7) AS `MONTH`, SUM(total_laid_off) total_off
-FROM layoffs_cleaned
-GROUP BY `MONTH`
-ORDER BY 1 ASC
-)
-SELECT `MONTH`, total_off
-, SUM(total_off) OVER(ORDER BY `MONTH`) rolling_total
-FROM Rolling_total;
+-- Top Performing Artists by Streams --
+-- Analyzed total streaming volume by artist to identify top-performing artists based on cumulative streams.--
+SELECT artist, SUM(streams) total_streams
+FROM music_data2
+GROUP BY artist
+ORDER BY total_streams DESC
+LIMIT 10;
 
 
-SELECT company, SUM(total_laid_off)
-FROM layoffs_cleaned
-GROUP BY company
-ORDER BY 2 DESC
-;
 
-SELECT company, YEAR(`date`), SUM(total_laid_off)
-FROM layoffs_cleaned
-GROUP BY company, YEAR(`date`)
-ORDER BY 3 DESC
-;
+-- Average Revenue by Platform --
+-- Evaluated platform-level monetization by calculating average revenue per stream source --
+SELECT platform, AVG(revenue_usd) avg_revenue
+FROM music_data2
+GROUP BY platform
+ORDER BY avg_revenue DESC;
 
 
-SELECT company, YEAR(`date`), SUM(total_laid_off)
-FROM layoffs_cleaned
-GROUP BY company, YEAR(`date`)
-;
 
-WITH Company_Year (company, years, total_laid_off)  AS 
-(
-SELECT company, YEAR(`date`), SUM(total_laid_off)
-FROM layoffs_cleaned
-GROUP BY company, YEAR(`date`)
-),Company_year_rank AS
-( 
-SELECT *, DENSE_RANK() OVER (PARTITION BY years ORDER BY total_laid_off DESC) ranking
-FROM Company_Year
-)
-SELECT *
-FROM Company_year_rank
-WHERE ranking <= 5
-;
+-- Streaming Distribution by Country --
+-- Analyzed geographic distribution of streams to identify high-engagement markets.--
+SELECT country, SUM(streams) total_streams
+FROM music_data2
+GROUP BY country
+ORDER BY total_streams DESC;
+
+
+
+-- Artist Performance (Streams vs Revenue) --
+-- Compared artist-level streaming performance with average revenue to assess the relationship between popularity and monetization.--
+SELECT artist,
+       SUM(streams) total_streams,
+       AVG(revenue_usd) avg_revenue
+FROM music_data2
+GROUP BY artist
+ORDER BY total_streams DESC;
+
+
+
+
