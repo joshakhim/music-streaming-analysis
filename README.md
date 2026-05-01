@@ -1,5 +1,3 @@
-# music-streaming-analysis
-
 # 🎧 Music Streaming Data Analysis
 
 ## 📌 Project Overview
