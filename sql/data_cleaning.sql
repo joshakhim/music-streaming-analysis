@@ -118,7 +118,7 @@ SET platform = 'Spotify'
 WHERE platform LIKE 'spotify%';
 
 
--- CHANGING MULTIPLE DATE FORMAT TO ONE DATE FORMAT --
+-- CHANGING MULTIPLE DATE FORMATS TO ONE DATE FORMAT --
 
 SELECT `date`
 FROM music_data2
